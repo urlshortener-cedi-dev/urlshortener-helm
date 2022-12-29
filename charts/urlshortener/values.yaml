@@ -27,7 +27,7 @@ urlshortener:
     targetMemoryUtilizationPercentage: 80
 
   image:
-    repository: ghcr.io/cedi/urlshortener
+    repository: ghcr.io/urlshortener-cedi-dev/urlshortener
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -182,7 +182,7 @@ apiServer:
     targetMemoryUtilizationPercentage: 80
 
   image:
-    repository: ghcr.io/cedi/urlshortener-api
+    repository: ghcr.io/urlshortener-cedi-dev/urlshortener-api
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
