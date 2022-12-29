@@ -28,10 +28,9 @@ urlshortener:
 
   image:
     repository: ghcr.io/cedi/urlshortener
-    # TODO: Re-enable pullPolicy: IfNotPresent
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: develop
+    tag: "latest"
 
   imagePullSecrets: []
 
@@ -62,34 +61,31 @@ urlshortener:
     type: ClusterIP
     port: 8123
   
-  # TODO: empty for release
   ingress:
-    enabled: true
-    className: "nginx"
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+    enabled: false
+    className: ""
+    annotations: {}
     hosts:
-      #- host: chart-example.local
-      - host: short.av0.de
+      - host: chart-example.local
         paths:
           - path: /
             pathType: ImplementationSpecific
-    tls:
-      - secretName: short-av-de-tls
-        hosts:
-          - short.av0.de
+    tls: {}
+    #  - secretName: chart-example-local-tls
+    #    hosts:
+    #      - chart-example.local
   
-  resources:
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    limits:
-      cpu: 500m
-      memory: 128Mi
-    requests:
-      cpu: 10m
-      memory: 64Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 64Mi
 
   terminationGracePeriodSeconds: 10
   
@@ -121,7 +117,7 @@ urlshortener:
   ## Application controller metrics configuration
   metrics:
     # -- Deploy metrics service
-    enabled: true
+    enabled: false
     service:
       # -- Metrics service annotations
       annotations: {}
@@ -187,10 +183,9 @@ apiServer:
 
   image:
     repository: ghcr.io/cedi/urlshortener-api
-    # TODO: Re-enable pullPolicy: IfNotPresent
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: develop
+    tag: "latest"
 
   imagePullSecrets: []
 
@@ -221,34 +216,31 @@ apiServer:
     type: ClusterIP
     port: 8443
   
-  # TODO: empty for release
   ingress:
-    enabled: true
-    className: "nginx"
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt-prod
+    enabled: false
+    className: ""
+    annotations: {}
     hosts:
-      #- host: chart-example.local
-      - host: api.short.av0.de
+      - host: chart-example.local
         paths:
           - path: /
             pathType: ImplementationSpecific
-    tls:
-      - secretName: api-short-av0-de-tls
-        hosts:
-          - api.short.av0.de
+    tls: {}
+    #  - secretName: chart-example-local-tls
+    #    hosts:
+    #      - chart-example.local
   
   resources:
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    limits:
-      cpu: 500m
-      memory: 128Mi
-    requests:
-      cpu: 10m
-      memory: 64Mi
+    # limits:
+    #   cpu: 500m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 10m
+    #   memory: 64Mi
 
   terminationGracePeriodSeconds: 10
   
@@ -280,7 +272,7 @@ apiServer:
   ## Application controller metrics configuration
   metrics:
     # -- Deploy metrics service
-    enabled: true
+    enabled: false
     service:
       # -- Metrics service annotations
       annotations: {}
