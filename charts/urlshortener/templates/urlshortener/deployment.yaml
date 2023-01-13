@@ -88,6 +88,20 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.urlshortener.resources | nindent 12 }}
+          env:
+            {{- with .Values.global.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.urlshortener.env }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.global.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.urlshortener.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.urlshortener.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

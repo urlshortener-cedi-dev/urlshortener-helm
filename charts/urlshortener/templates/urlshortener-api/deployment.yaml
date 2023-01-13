@@ -88,6 +88,20 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.apiServer.resources | nindent 12 }}
+          env:
+            {{- with .Values.global.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.apiServer.env }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.global.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.apiServer.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
       {{- with .Values.apiServer.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

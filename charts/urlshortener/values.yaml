@@ -15,6 +15,17 @@ apiVersionOverrides:
   # -- String to override apiVersion of pod disruption budgets rendered by this helm chart
   pdb: "" # policy/v1
 
+global:
+  # -- Common environment variables to add to all pods directly managed by this chart.
+  extraEnv: []
+
+  # -- Common source of environment injections to add to all pods directly managed by this chart.
+  # For example to inject values from a Secret, use:
+  # extraEnvFrom:
+  #   - secretRef:
+  #       name: mysecret
+  extraEnvFrom: []
+
 urlshortener:
   nameOverride: ""
 
@@ -31,6 +42,10 @@ urlshortener:
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
+
+  # Extra env variables to pass to the urlshortener container
+  env: []
+  extraEnvFrom: []
 
   imagePullSecrets: []
 
@@ -186,6 +201,10 @@ apiServer:
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
+
+  # Extra env variables to pass to the urlshortener-api container
+  env: []
+  extraEnvFrom: []
 
   imagePullSecrets: []
 
