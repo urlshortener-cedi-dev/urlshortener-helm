@@ -50,7 +50,7 @@ spec:
         #    requests:
         #      cpu: 5m
         #      memory: 64Mi
-        - name: {{ .Chart.Name }}
+        - name: {{ .Chart.Name }}-api
           securityContext:
             {{- toYaml .Values.apiServer.securityContext | nindent 12 }}
           image: "{{ .Values.apiServer.image.repository }}:{{ .Values.apiServer.image.tag | default .Chart.AppVersion }}"

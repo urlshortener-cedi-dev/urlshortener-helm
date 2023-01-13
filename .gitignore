@@ -90,3 +90,4 @@ dist/
 
 charts/*/charts/
 kustomize/*/*/charts/
+test-values.yaml
