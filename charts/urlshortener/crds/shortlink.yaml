@@ -77,13 +77,13 @@ spec:
                   type: integer
                 owner:
                   description: Owner is the GitHub user id which created the shortlink
-                  type: integer
+                  type: string
                 owners:
                   description:
                     Co-Owners are the GitHub user ids which can also administrate
                     this shortlink
                   items:
-                    type: integer
+                    type: string
                   type: array
                 target:
                   description: Target specifies the target to which we will redirect
@@ -99,7 +99,7 @@ spec:
                 changedby:
                   description: ChangedBy indicates who (GitHub User Id) changed the
                     Shortlink last
-                  type: integer
+                  type: string
                 count:
                   default: 0
                   description: Count represents how often this ShortLink has been called
