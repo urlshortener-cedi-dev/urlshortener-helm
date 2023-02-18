@@ -76,11 +76,11 @@ spec:
                     - 308
                   type: integer
                 owner:
-                  description: Owner is the GitHub user id which created the shortlink
+                  description: Owner is the GitHub user name which created the shortlink
                   type: string
                 owners:
                   description:
-                    Co-Owners are the GitHub user ids which can also administrate
+                    Co-Owners are the GitHub user name which can also administrate
                     this shortlink
                   items:
                     type: string
@@ -97,7 +97,7 @@ spec:
               description: ShortLinkStatus defines the observed state of ShortLink
               properties:
                 changedby:
-                  description: ChangedBy indicates who (GitHub User Id) changed the
+                  description: ChangedBy indicates who (GitHub User Name) changed the
                     Shortlink last
                   type: string
                 count:
