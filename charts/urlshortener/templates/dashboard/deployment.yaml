@@ -50,18 +50,16 @@ spec:
         #    requests:
         #      cpu: 5m
         #      memory: 64Mi
-        - name: {{ .Chart.Name }}-api
+        - name: {{ .Chart.Name }}-ui
           securityContext:
             {{- toYaml .Values.dashboard.securityContext | nindent 12 }}
           image: "{{ .Values.dashboard.image.repository }}:{{ .Values.dashboard.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.dashboard.image.pullPolicy }}
           command:
-            - /urlshortener-api
+            - /urlshortener-ui
           args:
-            - --health-probe-bind-address=:8081
+            - serve
             - --bind-address=:8443
-            - --metrics-bind-address=:{{ .Values.dashboard.metrics.service.servicePort }}
-            
           {{- with .Values.dashboard.extraArgs }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
