@@ -109,3 +109,55 @@ Create the name of the service account to use
 {{- default "default" .Values.apiServer.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{/*
+Expand the name of the urlshortener-api.
+*/}}
+{{- define "dashboard.name" -}}
+{{- default .Chart.Name "dashboard" .Values.dashboard.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+
+{{/*
+Create a default fully qualified app for the urlshortener name.
+We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
+If release name contains chart name it will be used as a full name.
+*/}}
+{{- define "dashboard.fullname" -}}
+{{- $name := default .Chart.Name "dashboard" .Values.dashboard.nameOverride }}
+{{- if contains $name .Release.Name }}
+{{- .Release.Name | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- end }}
+
+{{/*
+Common labels
+*/}}
+{{- define "dashboard.labels" -}}
+helm.sh/chart: {{ include "urlshortener.chart" . }}
+{{ include "dashboard.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "dashboard.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "dashboard.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "dashboard.serviceAccountName" -}}
+{{- if .Values.dashboard.serviceAccount.create }}
+{{- default (include "dashboard.fullname" .) .Values.dashboard.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.dashboard.serviceAccount.name }}
+{{- end }}
+{{- end }}

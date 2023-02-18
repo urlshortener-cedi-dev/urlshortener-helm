@@ -1,0 +1,26 @@
+{{- if and .Values.dashboard.metrics.enabled .Values.dashboard.metrics.rules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "dashboard.fullname" . }}
+  {{- if .Values.dashboard.metrics.rules.namespace }}
+  namespace: {{ .Values.dashboard.metrics.rules.namespace }}
+  {{- end }}
+  labels:
+    {{- include "dashboard.labels" . | nindent 4 }}
+    {{- if .Values.dashboard.metrics.rules.selector }}
+{{- toYaml .Values.dashboard.metrics.rules.selector | nindent 4 }}
+    {{- end }}
+    {{- if .Values.dashboard.metrics.rules.additionalLabels }}
+{{- toYaml .Values.dashboard.metrics.rules.additionalLabels | nindent 4 }}
+    {{- end }}
+  {{- with .Values.dashboard.metrics.rules.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  groups:
+  - name: argocd
+    rules:
+{{- toYaml .Values.dashboard.metrics.rules.spec | nindent 6 }}
+{{- end }}

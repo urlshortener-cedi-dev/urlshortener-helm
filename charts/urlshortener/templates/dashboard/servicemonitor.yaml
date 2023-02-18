@@ -1,0 +1,50 @@
+{{- if and .Values.dashboard.metrics.enabled .Values.dashboard.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "dashboard.fullname" . }}
+  {{- if .Values.dashboard.metrics.serviceMonitor.namespace }}
+  namespace: {{ .Values.dashboard.metrics.serviceMonitor.namespace }}
+  {{- end }}
+  labels:
+    {{- include "dashboard.labels" . | nindent 6 }}
+    {{- with .Values.dashboard.metrics.serviceMonitor.selector }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.dashboard.metrics.serviceMonitor.additionalLabels }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+
+  {{- with .Values.dashboard.metrics.serviceMonitor.annotations }}
+  annotations:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+spec:
+  endpoints:
+    - port: {{ .Values.dashboard.metrics.service.portName }}
+      {{- with .Values.dashboard.metrics.serviceMonitor.interval }}
+      interval: {{ . }}
+      {{- end }}
+      path: /metrics
+      {{- with .Values.dashboard.metrics.serviceMonitor.relabelings }}
+      relabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dashboard.metrics.serviceMonitor.metricRelabelings }}
+      metricRelabelings:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dashboard.metrics.serviceMonitor.scheme }}
+      scheme: {{ . }}
+      {{- end }}
+      {{- with .Values.dashboard.metrics.serviceMonitor.tlsConfig }}
+      tlsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "dashboard.selectorLabels" . | nindent 8 }}
+{{- end }}

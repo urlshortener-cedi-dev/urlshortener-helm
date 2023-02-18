@@ -1,0 +1,24 @@
+{{- if .Values.dashboard.pdb.enabled }}
+apiVersion: {{ include "apiVersion.pdb" . }}
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "dashboard.fullname" . }}
+  labels:
+    {{- include "dashboard.labels" . | nindent 6 }}
+    {{- with .Values.dashboard.pdb.labels }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.dashboard.pdb.annotations }}
+  annotations:
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+spec:
+  {{- with .Values.dashboard.pdb.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- else }}
+  minAvailable: {{ .Values.dashboard.pdb.minAvailable | default 0 }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "dashboard.selectorLabels" . | nindent 6 }}
+{{- end }}

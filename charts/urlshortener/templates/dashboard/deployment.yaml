@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dashboard.fullname" . }}
+  labels:
+    {{- include "dashboard.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.dashboard.autoscaling.enabled }}
+  replicas: {{ .Values.dashboard.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "dashboard.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.dashboard.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "dashboard.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.dashboard.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "dashboard.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.dashboard.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: {{ .Values.dashboard.terminationGracePeriodSeconds }}
+      containers:
+        #- name: kube-rbac-proxy
+        #  securityContext:
+        #    allowPrivilegeEscalation: false
+        #  image: gcr.io/kubebuilder/kube-rbac-proxy:v0.11.0
+        #  imagePullPolicy: ifNotPresent
+        #  args:
+        #    - --secure-listen-address=0.0.0.0:8443
+        #    - --upstream=http://127.0.0.1:8080/
+        #    - --logtostderr=true
+        #    - --v=0
+        #  ports:
+        #    - containerPort: 8443
+        #      name: https
+        #      protocol: TCP
+        #  resources:
+        #    limits:
+        #      cpu: 500m
+        #      memory: 128Mi
+        #    requests:
+        #      cpu: 5m
+        #      memory: 64Mi
+        - name: {{ .Chart.Name }}-api
+          securityContext:
+            {{- toYaml .Values.dashboard.securityContext | nindent 12 }}
+          image: "{{ .Values.dashboard.image.repository }}:{{ .Values.dashboard.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.dashboard.image.pullPolicy }}
+          command:
+            - /urlshortener-api
+          args:
+            - --health-probe-bind-address=:8081
+            - --bind-address=:8443
+            - --metrics-bind-address=:{{ .Values.dashboard.metrics.service.servicePort }}
+            
+          {{- with .Values.dashboard.extraArgs }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.dashboard.service.port }}
+              protocol: TCP
+            {{- if .Values.dashboard.metrics.enabled }}
+            - name: {{ .Values.dashboard.metrics.service.portName }}
+              containerPort: {{ .Values.dashboard.metrics.service.servicePort }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.dashboard.resources | nindent 12 }}
+          env:
+            {{- with .Values.global.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.dashboard.env }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.global.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+            {{- with .Values.dashboard.extraEnvFrom }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+      {{- with .Values.dashboard.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dashboard.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.dashboard.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

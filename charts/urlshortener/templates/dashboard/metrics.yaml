@@ -1,0 +1,23 @@
+{{- if .Values.dashboard.metrics.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dashboard.fullname" . }}-metrics
+  labels:
+    {{- include "dashboard.labels" . | nindent 6 }}
+    {{- with .Values.dashboard.metrics.service.labels }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- with .Values.dashboard.metrics.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+spec:
+  ports:
+  - name: {{ .Values.dashboard.metrics.service.portName }}
+    protocol: TCP
+    port: {{ .Values.dashboard.metrics.service.servicePort }}
+    targetPort: {{ .Values.dashboard.metrics.service.portName }}
+  selector:
+    {{- include "dashboard.selectorLabels" . | nindent 6 }}
+{{- end }}
